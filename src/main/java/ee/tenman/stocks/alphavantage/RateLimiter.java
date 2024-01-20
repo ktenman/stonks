@@ -5,6 +5,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class RateLimiter {
+    
     private final int maxRequests;
     private final int timePeriodInMillis;
     private long startTime;

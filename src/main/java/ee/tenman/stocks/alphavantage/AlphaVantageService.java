@@ -15,7 +15,6 @@ public class AlphaVantageService {
     
     @Resource
     private AlphaVantageClient client;
-
     
     @Retryable(backoff = @Backoff(delay = 1000))
     public AlphaVantageResponse getMonthlyTimeSeries(String symbol) {
