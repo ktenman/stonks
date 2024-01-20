@@ -1,7 +1,6 @@
 package ee.tenman.stocks.alphavantage;
 
 import feign.RequestInterceptor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,8 +28,6 @@ public interface AlphaVantageClient {
     String getString(@PathVariable String function, @PathVariable String symbol);
 
     class Configuration {
-        @Value("${alphavantage.api.key}")
-        private String alphaVantageKey;
         
         private static final Random RANDOM = new Random();
         
@@ -42,7 +39,7 @@ public interface AlphaVantageClient {
                     "DOSJJM3U7HKZ741I",
                     "WIODF0D96B7EKTK2",
                     "3919KXD313S1RX7J",
-                    alphaVantageKey
+                    "0MOK4N559XJ9EIDR"
             );
             
             String randomKey = keys.get(RANDOM.nextInt(0, keys.size()));
