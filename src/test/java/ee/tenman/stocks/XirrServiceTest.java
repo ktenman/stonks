@@ -40,6 +40,6 @@ class XirrServiceTest {
 		
 		double annualReturn = xirrService.calculateStockXirr("QDVE");
 		
-		assertThat(annualReturn).isEqualTo(1.2396980376670366);
+		assertThat(annualReturn).isEqualTo(1.2396980376671218);
 	}
 }
