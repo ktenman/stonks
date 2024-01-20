@@ -1,0 +1,4 @@
+alphavantage:
+  url: http://localhost:${wiremock.server.port}
+  api:
+    key: "0MOK4N559XJ9EIDR"

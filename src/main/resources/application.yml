@@ -1,0 +1,4 @@
+alphavantage:
+  url: https://www.alphavantage.co
+  api:
+    key: "0MOK4N559XJ9EIDR"
