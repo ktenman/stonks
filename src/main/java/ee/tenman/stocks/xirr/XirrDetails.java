@@ -1,7 +1,7 @@
 package ee.tenman.stocks.xirr;
 
 import java.time.LocalDate;
-import java.util.stream.Collector;
+import java.util.Collection;
 
 class XirrDetails {
     LocalDate start;
@@ -11,12 +11,17 @@ class XirrDetails {
     double total;
     double deposits;
     
-    public static Collector<Transaction, XirrDetails, XirrDetails> collector() {
-        return Collector.of(XirrDetails::new, XirrDetails::accumulate, XirrDetails::combine);
+    public XirrDetails(Collection<Transaction> transactions) {
+        if (transactions == null || transactions.isEmpty()) {
+            throw new IllegalArgumentException("Transactions collection cannot be null or empty.");
+        }
+        transactions.forEach(this::processTransaction);
+        validateDateRange();
+        validateTransactionAmounts();
     }
     
-    public void accumulate(final Transaction transaction) {
-        updateStartEnd(transaction);
+    private void processTransaction(final Transaction transaction) {
+        updateDateRange(transaction);
         updateAmounts(transaction);
         total += transaction.amount();
         if (transaction.amount() < 0) {
@@ -24,9 +29,13 @@ class XirrDetails {
         }
     }
     
-    private void updateStartEnd(Transaction transaction) {
-        start = (start == null || start.isAfter(transaction.when())) ? transaction.when() : start;
-        end = (end == null || end.isBefore(transaction.when())) ? transaction.when() : end;
+    private void updateDateRange(Transaction transaction) {
+        if (start == null || start.isAfter(transaction.when())) {
+            start = transaction.when();
+        }
+        if (end == null || end.isBefore(transaction.when())) {
+            end = transaction.when();
+        }
     }
     
     private void updateAmounts(Transaction transaction) {
@@ -34,25 +43,15 @@ class XirrDetails {
         maxAmount = Math.max(maxAmount, transaction.amount());
     }
     
-    public XirrDetails combine(final XirrDetails other) {
-        start = start.isBefore(other.start) ? start : other.start;
-        end = end.isAfter(other.end) ? end : other.end;
-        minAmount = Math.min(minAmount, other.minAmount);
-        maxAmount = Math.max(maxAmount, other.maxAmount);
-        total += other.total;
-        deposits += other.deposits;
-        return this;
+    private void validateDateRange() {
+        if (start == null || end == null || start.equals(end)) {
+            throw new IllegalArgumentException("Invalid date range for transactions.");
+        }
     }
     
-    public void validate() {
-        if (start == null || end == null) {
-            throw new IllegalArgumentException("No transactions to analyze");
-        }
-        if (start.equals(end)) {
-            throw new IllegalArgumentException("Transactions must not all be on the same day.");
-        }
+    private void validateTransactionAmounts() {
         if (minAmount >= 0 || maxAmount <= 0) {
-            throw new IllegalArgumentException("There must be both positive and negative transactions.");
+            throw new IllegalArgumentException("Need both positive and negative transactions.");
         }
     }
 }

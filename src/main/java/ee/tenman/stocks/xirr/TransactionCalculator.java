@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,12 +21,16 @@ public class TransactionCalculator {
 	}
 	
 	public void processDate(LocalDate date, BigDecimal price, LocalDate lastDataDate) {
-		if (lastMonthDate == null || Period.between(lastMonthDate, date).getMonths() >= 1) {
+		if (shouldAddStockPurchase(date)) {
 			addStockPurchaseTransaction(date, price);
 		}
 		if (date.isEqual(lastDataDate)) {
 			addFinalSellingTransaction(date, price);
 		}
+	}
+	
+	private boolean shouldAddStockPurchase(LocalDate date) {
+		return lastMonthDate == null || ChronoUnit.MONTHS.between(lastMonthDate.withDayOfMonth(1), date.withDayOfMonth(1)) >= 1;
 	}
 	
 	private void addStockPurchaseTransaction(LocalDate date, BigDecimal price) {

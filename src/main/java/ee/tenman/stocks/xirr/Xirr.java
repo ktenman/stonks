@@ -18,57 +18,36 @@ public class Xirr {
     private Double guess;
     
     public Xirr(Collection<Transaction> transactions) {
-        validateTransactions(transactions);
-        this.details = transactions.stream().collect(XirrDetails.collector());
-        this.details.validate();
+        if (transactions == null || transactions.size() < 2) {
+            throw new IllegalArgumentException("Must have at least two transactions");
+        }
+        this.details = new XirrDetails(transactions);
         this.investments = transactions.stream()
                 .map(t -> new Investment(t, details.end))
                 .toList();
-    }
-    
-    private void validateTransactions(Collection<Transaction> transactions) {
-        if (transactions.size() < 2) {
-            throw new IllegalArgumentException("Must have at least two transactions");
-        }
     }
     
     public double xirr() {
         if (details.maxAmount == 0) {
             return -1;
         }
-        guess = (guess != null) ? guess : calculateDefaultGuess();
-        UnivariateDifferentiableFunction function = createXirrFunction();
-        return solver.solve(1000, function, guess, -1.0, 1.0);
-    }
-    
-    private double calculateDefaultGuess() {
-        double years = DAYS.between(details.start, details.end) / DAYS_IN_YEAR;
-        return (details.total / details.deposits) / years;
+        guess = (guess != null) ? guess : (details.total / details.deposits) / (DAYS.between(details.start, details.end) / DAYS_IN_YEAR);
+        UnivariateDifferentiableFunction xirrFunction = createXirrFunction();
+        return solver.solve(1000, xirrFunction, guess, -1.0, 1.0);
     }
     
     private UnivariateDifferentiableFunction createXirrFunction() {
         return new UnivariateDifferentiableFunction() {
             @Override
             public double value(double rate) {
-                return presentValue(rate);
+                return investments.stream().mapToDouble(investment -> investment.presentValue(rate)).sum();
             }
             
             @Override
             public DerivativeStructure value(DerivativeStructure t) {
                 double rate = t.getValue();
-                return new DerivativeStructure(t.getFreeParameters(), t.getOrder(), presentValue(rate), derivative(rate));
-            }
-            
-            private double presentValue(double rate) {
-                return investments.stream()
-                        .mapToDouble(investment -> investment.presentValue(rate))
-                        .sum();
-            }
-            
-            private double derivative(double rate) {
-                return investments.stream()
-                        .mapToDouble(inv -> inv.derivative(rate))
-                        .sum();
+                return new DerivativeStructure(t.getFreeParameters(), t.getOrder(), value(rate),
+                        investments.stream().mapToDouble(inv -> inv.derivative(rate)).sum());
             }
         };
     }
