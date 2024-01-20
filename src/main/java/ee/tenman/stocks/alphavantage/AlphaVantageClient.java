@@ -1,7 +1,6 @@
 package ee.tenman.stocks.alphavantage;
 
 import feign.RequestInterceptor;
-import org.apache.commons.lang3.RandomUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
+import java.util.Random;
 
 @FeignClient(name = AlphaVantageClient.CLIENT_NAME, url = "${alphavantage.url}", configuration = AlphaVantageClient.Configuration.class)
 public interface AlphaVantageClient {
@@ -32,6 +32,8 @@ public interface AlphaVantageClient {
         @Value("${alphavantage.api.key}")
         private String alphaVantageKey;
         
+        private static final Random RANDOM = new Random();
+        
         @Bean
         public RequestInterceptor requestInterceptor() {
             List<String> keys = List.of(
@@ -43,7 +45,7 @@ public interface AlphaVantageClient {
                     alphaVantageKey
             );
             
-            String randomKey = keys.get(RandomUtils.nextInt(0, keys.size()));
+            String randomKey = keys.get(RANDOM.nextInt(0, keys.size()));
 	        return template -> new RateLimiter().check(() -> template.query("apikey", randomKey));
         }
     }
