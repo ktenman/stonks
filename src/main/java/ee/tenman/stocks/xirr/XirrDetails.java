@@ -15,23 +15,23 @@ class XirrDetails {
         return Collector.of(XirrDetails::new, XirrDetails::accumulate, XirrDetails::combine);
     }
     
-    public void accumulate(final Transaction tx) {
-        updateStartEnd(tx);
-        updateAmounts(tx);
-        total += tx.amount();
-        if (tx.amount() < 0) {
-            deposits -= tx.amount();
+    public void accumulate(final Transaction transaction) {
+        updateStartEnd(transaction);
+        updateAmounts(transaction);
+        total += transaction.amount();
+        if (transaction.amount() < 0) {
+            deposits -= transaction.amount();
         }
     }
     
-    private void updateStartEnd(Transaction tx) {
-        start = (start == null || start.isAfter(tx.when())) ? tx.when() : start;
-        end = (end == null || end.isBefore(tx.when())) ? tx.when() : end;
+    private void updateStartEnd(Transaction transaction) {
+        start = (start == null || start.isAfter(transaction.when())) ? transaction.when() : start;
+        end = (end == null || end.isBefore(transaction.when())) ? transaction.when() : end;
     }
     
-    private void updateAmounts(Transaction tx) {
-        minAmount = Math.min(minAmount, tx.amount());
-        maxAmount = Math.max(maxAmount, tx.amount());
+    private void updateAmounts(Transaction transaction) {
+        minAmount = Math.min(minAmount, transaction.amount());
+        maxAmount = Math.max(maxAmount, transaction.amount());
     }
     
     public XirrDetails combine(final XirrDetails other) {

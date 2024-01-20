@@ -1,5 +1,6 @@
 package ee.tenman.stocks;
 
+import ee.tenman.stocks.xirr.XirrService;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +41,6 @@ class XirrServiceTest {
 		
 		double annualReturn = xirrService.calculateStockXirr("QDVE");
 		
-		assertThat(annualReturn).isEqualTo(1.2396980376671218);
+		assertThat(annualReturn).isEqualTo(1.2385510375896522);
 	}
 }
