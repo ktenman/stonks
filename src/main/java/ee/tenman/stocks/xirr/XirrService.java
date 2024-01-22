@@ -2,6 +2,7 @@ package ee.tenman.stocks.xirr;
 
 import ee.tenman.stocks.alphavantage.AlphaVantageResponse;
 import ee.tenman.stocks.alphavantage.AlphaVantageService;
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,12 @@ public class XirrService {
 	@Resource
 	private AlphaVantageService alphaVantageService;
 	
+	@PostConstruct
+	public void init() {
+		log.info("XIRR service initialized");
+		calculateStockXirr("QDVE");
+	}
+	
 	public double calculateStockXirr(String ticker) {
 		try {
 			List<Transaction> transactions = processHistoricalData(ticker);
@@ -28,7 +35,7 @@ public class XirrService {
 			return xirrValue + 1;
 		} catch (Exception e) {
 			log.error("Error in calculating XIRR for ticker: {}, error: ", ticker, e);
-			return Double.NaN;  // or appropriate error handling
+			return Double.NaN;
 		}
 	}
 	
