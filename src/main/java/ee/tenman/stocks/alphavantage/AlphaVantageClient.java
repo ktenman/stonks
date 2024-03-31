@@ -32,6 +32,8 @@ public interface AlphaVantageClient {
 	class Configuration {
 		private static final Random RANDOM = new Random();
 		
+		private final RateLimiter rateLimiter = new RateLimiter();
+		
 		@Bean
 		public RequestInterceptor requestInterceptor() {
 			List<String> keys = List.of(
@@ -44,7 +46,7 @@ public interface AlphaVantageClient {
 			);
 			
 			String randomKey = keys.get(RANDOM.nextInt(0, keys.size()));
-			return template -> new RateLimiter().check(() -> template.query("apikey", randomKey));
+			return template -> rateLimiter.check(() -> template.query("apikey", randomKey));
 		}
 	}
 }
