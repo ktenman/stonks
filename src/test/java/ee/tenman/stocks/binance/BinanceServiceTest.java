@@ -19,6 +19,7 @@ class BinanceServiceTest {
 	@Disabled
 	void getMonthlyPrices() {
 		TreeMap<LocalDate, BigDecimal> btc = binanceService.getMonthlyPrices("BTCUSDT");
+		TreeMap<LocalDate, BigDecimal> btc2 = binanceService.getMonthlyPrices("ETHUSDT");
 		System.out.println();
 	}
 	

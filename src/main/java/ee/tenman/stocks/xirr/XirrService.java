@@ -25,6 +25,8 @@ public class XirrService {
 		calculateStockXirr("QDVE.DEX");
 		calculateStockXirr("IITU");
 		calculateStockXirr("AMZN");
+		calculateStockXirr("BTCUSDT");
+		calculateStockXirr("ETHUSDT");
 	}
 	
 	public double calculateStockXirr(String ticker) {
