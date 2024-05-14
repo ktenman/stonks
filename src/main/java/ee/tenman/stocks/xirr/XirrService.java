@@ -1,7 +1,5 @@
 package ee.tenman.stocks.xirr;
 
-import ee.tenman.stocks.alphavantage.AlphaVantageResponse;
-import ee.tenman.stocks.alphavantage.AlphaVantageService;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -18,13 +15,16 @@ import java.util.TreeMap;
 public class XirrService {
 	
 	private static final BigDecimal BASE_ORIGINAL_BIG_DECIMAL_STOCK = new BigDecimal("3000.00");
+	
 	@Resource
-	private AlphaVantageService alphaVantageService;
+	PriceService priceService;
 	
 	@PostConstruct
 	public void init() {
 		log.info("XIRR service initialized");
-		calculateStockXirr("QDVE");
+		calculateStockXirr("QDVE.DEX");
+		calculateStockXirr("IITU");
+		calculateStockXirr("AMZN");
 	}
 	
 	public double calculateStockXirr(String ticker) {
@@ -40,14 +40,7 @@ public class XirrService {
 	}
 	
 	private List<Transaction> processHistoricalData(String ticker) {
-		TreeMap<LocalDate, BigDecimal> historicalData = new TreeMap<>();
-		AlphaVantageResponse response = alphaVantageService.getMonthlyTimeSeries(ticker);
-		response.getMonthlyTimeSeries().forEach((key, value) -> {
-			LocalDate date = LocalDate.parse(key, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-			BigDecimal price = value.getClose();
-			historicalData.put(date, price);
-		});
-		
+		TreeMap<LocalDate, BigDecimal> historicalData = priceService.getHistoricalData(ticker);
 		TransactionCalculator calculator = new TransactionCalculator(BASE_ORIGINAL_BIG_DECIMAL_STOCK);
 		LocalDate lastDataDate = historicalData.lastKey();
 		historicalData.forEach((date, price) -> calculator.processDate(date, price, lastDataDate));

@@ -1,4 +1,4 @@
 alphavantage:
   url: https://www.alphavantage.co
 server:
-  port: 50001
+  port: 50099
