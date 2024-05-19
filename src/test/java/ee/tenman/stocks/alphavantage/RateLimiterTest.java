@@ -22,49 +22,45 @@ class RateLimiterTest {
 	
 	@BeforeEach
 	void setUp() {
-		rateLimiter = new RateLimiter(3, clock);
+        this.rateLimiter = new RateLimiter(3, this.clock);
 	}
 	
 	@Test
 	void testRateLimiterAllowsRequestsWithinLimit() {
-		AtomicInteger counter = new AtomicInteger();
-		Runnable task = counter::incrementAndGet;
-		when(clock.millis()).thenReturn(0L, 1000L, 2000L);
-		
-		rateLimiter.check(task);
-		rateLimiter.check(task);
-		rateLimiter.check(task);
-		
-		assertThat(counter.get()).isEqualTo(3);
+		final var counter = new AtomicInteger();
+		final Runnable task = counter::incrementAndGet;
+		when(this.clock.millis()).thenReturn(0L, 1000L, 2000L);
+
+        for (int i = 0; i < 3; i++) {
+            this.rateLimiter.check(task);
+        }
+
+        assertThat(counter.get()).isEqualTo(3);
 	}
 	
 	@Test
 	void testRateLimiterBlocksRequestsExceedingLimit() {
-		AtomicInteger counter = new AtomicInteger();
-		Runnable task = counter::incrementAndGet;
-		when(clock.millis()).thenReturn(0L, 1000L, 2000L, 3000L);
-		
-		rateLimiter.check(task);
-		rateLimiter.check(task);
-		rateLimiter.check(task);
-		rateLimiter.check(task);
-		
-		assertThat(counter.get()).isEqualTo(3);
+		final AtomicInteger counter = new AtomicInteger();
+		final Runnable task = counter::incrementAndGet;
+		when(this.clock.millis()).thenReturn(0L, 1000L, 2000L, 3000L);
+
+        for (int i = 0; i < 4; i++) {
+            this.rateLimiter.check(task);
+        }
+
+        assertThat(counter.get()).isEqualTo(3);
 	}
 	
 	@Test
 	void testRateLimiterResetsAfterTimePeriod() {
-		AtomicInteger counter = new AtomicInteger();
-		Runnable task = counter::incrementAndGet;
-		when(clock.millis()).thenReturn(0L, 1000L, 2000L, 60001L, 61000L, 62000L);
-		
-		rateLimiter.check(task);
-		rateLimiter.check(task);
-		rateLimiter.check(task);
-		rateLimiter.check(task);
-		rateLimiter.check(task);
-		rateLimiter.check(task);
-		
-		assertThat(counter.get()).isEqualTo(6);
+		final AtomicInteger counter = new AtomicInteger();
+		final Runnable task = counter::incrementAndGet;
+		when(this.clock.millis()).thenReturn(0L, 1000L, 2000L, 60001L, 61000L, 62000L);
+
+        for (int i = 0; i < 6; i++) {
+            this.rateLimiter.check(task);
+        }
+
+        assertThat(counter.get()).isEqualTo(6);
 	}
 }

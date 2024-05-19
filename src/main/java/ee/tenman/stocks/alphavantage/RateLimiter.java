@@ -19,7 +19,7 @@ public class RateLimiter {
         this(MAX_REQUESTS_PER_MINUTE, Clock.systemUTC());
     }
     
-    public RateLimiter(int maxRequestsPerMinute, Clock clock) {
+    public RateLimiter(final int maxRequestsPerMinute, final Clock clock) {
         this.maxRequests = maxRequestsPerMinute;
         this.timePeriodInMillis = 60 * 1000;
         this.clock = clock;
@@ -27,17 +27,17 @@ public class RateLimiter {
         this.requestCount = 0;
     }
     
-    public synchronized void check(Runnable task) {
-        long currentTime = clock.millis();
-        if (currentTime > startTime + timePeriodInMillis) {
-            startTime = currentTime;
-            requestCount = 0;
+    public synchronized void check(final Runnable task) {
+        final long currentTime = this.clock.millis();
+        if (currentTime > this.startTime + this.timePeriodInMillis) {
+            this.startTime = currentTime;
+            this.requestCount = 0;
         }
-        if (requestCount < maxRequests) {
-            requestCount++;
+        if (this.requestCount < this.maxRequests) {
+            this.requestCount++;
             task.run();
         } else {
-            scheduler.schedule(task, 1, TimeUnit.SECONDS);
+            this.scheduler.schedule(task, 1, TimeUnit.SECONDS);
         }
     }
 }

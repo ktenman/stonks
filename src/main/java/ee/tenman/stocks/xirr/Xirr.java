@@ -17,37 +17,37 @@ public class Xirr {
     private final NewtonRaphsonSolver solver = new NewtonRaphsonSolver();
     private Double guess;
     
-    public Xirr(Collection<Transaction> transactions) {
+    public Xirr(final Collection<Transaction> transactions) {
         if (transactions == null || transactions.size() < 2) {
             throw new IllegalArgumentException("Must have at least two transactions");
         }
         this.details = new XirrDetails(transactions);
         this.investments = transactions.stream()
-                .map(t -> new Investment(t, details.end))
+                .map(t -> new Investment(t, this.details.end))
                 .toList();
     }
     
     public double xirr() {
-        if (details.maxAmount == 0) {
+        if (this.details.maxAmount == 0) {
             return -1;
         }
-        guess = (guess != null) ? guess : (details.total / details.deposits) / (DAYS.between(details.start, details.end) / DAYS_IN_YEAR);
-        UnivariateDifferentiableFunction xirrFunction = createXirrFunction();
-        return solver.solve(1000, xirrFunction, guess, -1.0, 1.0);
+        this.guess = (this.guess != null) ? this.guess : (this.details.total / this.details.deposits) / (DAYS.between(this.details.start, this.details.end) / DAYS_IN_YEAR);
+        final UnivariateDifferentiableFunction xirrFunction = this.createXirrFunction();
+        return this.solver.solve(1000, xirrFunction, this.guess, -1.0, 1.0);
     }
     
     private UnivariateDifferentiableFunction createXirrFunction() {
         return new UnivariateDifferentiableFunction() {
             @Override
-            public double value(double rate) {
-                return investments.stream().mapToDouble(investment -> investment.presentValue(rate)).sum();
+            public double value(final double rate) {
+                return Xirr.this.investments.stream().mapToDouble(investment -> investment.presentValue(rate)).sum();
             }
             
             @Override
-            public DerivativeStructure value(DerivativeStructure t) {
-                double rate = t.getValue();
-                return new DerivativeStructure(t.getFreeParameters(), t.getOrder(), value(rate),
-                        investments.stream().mapToDouble(inv -> inv.derivative(rate)).sum());
+            public DerivativeStructure value(final DerivativeStructure t) {
+                final double rate = t.getValue();
+                return new DerivativeStructure(t.getFreeParameters(), t.getOrder(), this.value(rate),
+                        Xirr.this.investments.stream().mapToDouble(inv -> inv.derivative(rate)).sum());
             }
         };
     }
@@ -56,17 +56,17 @@ public class Xirr {
         final double amount;
         final double years;
         
-        Investment(Transaction transaction, LocalDate endDate) {
+        Investment(final Transaction transaction, final LocalDate endDate) {
             this.amount = transaction.amount();
             this.years = DAYS.between(transaction.when(), endDate) / DAYS_IN_YEAR;
         }
         
-        double presentValue(double rate) {
-            return years == 0 ? amount : amount * Math.pow(1 + rate, years);
+        double presentValue(final double rate) {
+            return this.years == 0 ? this.amount : this.amount * Math.pow(1 + rate, this.years);
         }
         
-        double derivative(double rate) {
-            return years == 0 ? 0 : amount * years * Math.pow(1 + rate, years - 1);
+        double derivative(final double rate) {
+            return this.years == 0 ? 0 : this.amount * this.years * Math.pow(1 + rate, this.years - 1);
         }
     }
 }

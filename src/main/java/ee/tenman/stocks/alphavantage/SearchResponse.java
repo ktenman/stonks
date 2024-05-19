@@ -34,7 +34,7 @@ public class SearchResponse {
         private String currency;
 
         @Override
-        public int compareTo(SearchData other) {
+        public int compareTo(final SearchData other) {
             return this.symbol.compareTo(other.getSymbol());
         }
     }

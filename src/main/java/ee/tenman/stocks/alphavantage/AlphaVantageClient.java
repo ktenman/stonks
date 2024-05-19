@@ -36,7 +36,7 @@ public interface AlphaVantageClient {
 		
 		@Bean
 		public RequestInterceptor requestInterceptor() {
-			List<String> keys = List.of(
+			final List<String> keys = List.of(
 					"LP89F1C09XFYGW1U",
 					"MNIF0F2HMV93J8TX",
 					"DOSJJM3U7HKZ741I",
@@ -45,8 +45,8 @@ public interface AlphaVantageClient {
 					"0MOK4N559XJ9EIDR"
 			);
 			
-			String randomKey = keys.get(RANDOM.nextInt(0, keys.size()));
-			return template -> rateLimiter.check(() -> template.query("apikey", randomKey));
+			final String randomKey = keys.get(RANDOM.nextInt(0, keys.size()));
+			return template -> this.rateLimiter.check(() -> template.query("apikey", randomKey));
 		}
 	}
 }

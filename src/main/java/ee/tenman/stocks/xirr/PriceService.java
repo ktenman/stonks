@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 @Service
@@ -20,15 +21,15 @@ public class PriceService {
 	@Resource
 	private BinanceService binanceService;
 	
-	public TreeMap<LocalDate, BigDecimal> getHistoricalData(String ticker) {
+	public SortedMap<LocalDate, BigDecimal> getHistoricalData(final String ticker) {
 		try {
-			return binanceService.getMonthlyPrices(ticker);
-		} catch (Exception e) {
-			TreeMap<LocalDate, BigDecimal> historicalData = new TreeMap<>();
-			AlphaVantageResponse response = alphaVantageService.getMonthlyTimeSeries(ticker);
+			return this.binanceService.getMonthlyPrices(ticker);
+		} catch (final Exception e) {
+			final TreeMap<LocalDate, BigDecimal> historicalData = new TreeMap<>();
+			final AlphaVantageResponse response = this.alphaVantageService.getMonthlyTimeSeries(ticker);
 			response.getMonthlyTimeSeries().forEach((key, value) -> {
-				LocalDate date = LocalDate.parse(key, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-				BigDecimal price = value.getClose();
+				final LocalDate date = LocalDate.parse(key, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+				final BigDecimal price = value.getClose();
 				historicalData.put(date, price);
 			});
 			return historicalData;

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.SortedMap;
 
 @Service
 @Slf4j
@@ -22,29 +22,29 @@ public class XirrService {
 	@PostConstruct
 	public void init() {
 		log.info("XIRR service initialized");
-		calculateStockXirr("QDVE.DEX");
-		calculateStockXirr("IITU");
-		calculateStockXirr("AMZN");
-		calculateStockXirr("BTCUSDT");
-		calculateStockXirr("ETHUSDT");
+        this.calculateStockXirr("QDVE.DEX");
+        this.calculateStockXirr("IITU");
+        this.calculateStockXirr("AMZN");
+        this.calculateStockXirr("BTCUSDT");
+        this.calculateStockXirr("ETHUSDT");
 	}
 	
-	public double calculateStockXirr(String ticker) {
+	public double calculateStockXirr(final String ticker) {
 		try {
-			List<Transaction> transactions = processHistoricalData(ticker);
-			double xirrValue = new Xirr(transactions).xirr();
+			final List<Transaction> transactions = this.processHistoricalData(ticker);
+			final double xirrValue = new Xirr(transactions).xirr();
 			log.info("{} : {}%", ticker, xirrValue * 100);
 			return xirrValue + 1;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			log.error("Error in calculating XIRR for ticker: {}, error: ", ticker, e);
 			return Double.NaN;
 		}
 	}
 	
-	private List<Transaction> processHistoricalData(String ticker) {
-		TreeMap<LocalDate, BigDecimal> historicalData = priceService.getHistoricalData(ticker);
-		TransactionCalculator calculator = new TransactionCalculator(BASE_ORIGINAL_BIG_DECIMAL_STOCK);
-		LocalDate lastDataDate = historicalData.lastKey();
+	private List<Transaction> processHistoricalData(final String ticker) {
+		final SortedMap<LocalDate, BigDecimal> historicalData = this.priceService.getHistoricalData(ticker);
+		final TransactionCalculator calculator = new TransactionCalculator(BASE_ORIGINAL_BIG_DECIMAL_STOCK);
+		final LocalDate lastDataDate = historicalData.lastKey();
 		historicalData.forEach((date, price) -> calculator.processDate(date, price, lastDataDate));
 		return calculator.getTransactions();
 	}

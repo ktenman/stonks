@@ -19,8 +19,8 @@ class BinanceApiClient {
 	
 	@Bean
 	public SpotClientImpl spotClient() {
-		String key = FileUtils.getSecret(binanceApiKey);
-		String secret = FileUtils.getSecret(binanceSecretKey);
+		final String key = FileUtils.getSecret(this.binanceApiKey);
+		final String secret = FileUtils.getSecret(this.binanceSecretKey);
 		
 		return new SpotClientImpl(key, secret);
 	}

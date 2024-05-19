@@ -9,10 +9,10 @@ import java.io.InputStreamReader;
 import static java.util.stream.Collectors.joining;
 
 public interface FileUtils {
-	static String getSecret(ClassPathResource classPathResource) {
-		try (BufferedReader buffer = new BufferedReader(new InputStreamReader(classPathResource.getInputStream()))) {
+	static String getSecret(final ClassPathResource classPathResource) {
+		try (final BufferedReader buffer = new BufferedReader(new InputStreamReader(classPathResource.getInputStream()))) {
 			return buffer.lines().collect(joining(""));
-		} catch (IOException ignored) {
+		} catch (final IOException ignored) {
 			return null;
 		}
 	}

@@ -21,19 +21,19 @@ public class AlphaVantageService {
     private AlphaVantageClient client;
     
     @Retryable(backoff = @Backoff(delay = 1000))
-    public AlphaVantageResponse getMonthlyTimeSeries(String symbol) {
-        return getTicker(symbol)
+    public AlphaVantageResponse getMonthlyTimeSeries(final String symbol) {
+        return this.getTicker(symbol)
                 .map(ticker -> {
-                    AlphaVantageResponse timeSeriesMonthly = client.getMonthlyTimeSeries("TIME_SERIES_MONTHLY", ticker);
-                    log.info("Retrieved monthly ticker data: {}", gson.toJson(timeSeriesMonthly));
+                    final AlphaVantageResponse timeSeriesMonthly = this.client.getMonthlyTimeSeries("TIME_SERIES_MONTHLY", ticker);
+                    log.info("Retrieved monthly ticker data: {}", this.gson.toJson(timeSeriesMonthly));
                     return timeSeriesMonthly;
                 })
                 .orElseThrow(() -> new RuntimeException("Error while fetching data from Alpha Vantage"));
     }
     
     @Retryable(backoff = @Backoff(delay = 1000))
-    public Optional<String> getTicker(String search) {
-        SearchResponse symbolSearch = client.getSearch("SYMBOL_SEARCH", search, String.valueOf(1));
+    public Optional<String> getTicker(final String search) {
+        final SearchResponse symbolSearch = this.client.getSearch("SYMBOL_SEARCH", search, String.valueOf(1));
         return Optional.ofNullable(symbolSearch)
                 .map(SearchResponse::getBestMatches)
                 .stream()
