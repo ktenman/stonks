@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 
+import java.util.Optional;
+
 @Configuration
 @Slf4j
 @Profile("!test")
@@ -21,9 +23,11 @@ class BinanceApiClient {
 	
 	@Bean
 	public SpotClientImpl spotClient() {
-		final String key = FileUtils.getSecret(this.binanceApiKey);
-		final String secret = FileUtils.getSecret(this.binanceSecretKey);
-		
-		return new SpotClientImpl(key, secret);
+		final Optional<String> key = FileUtils.getSecret(this.binanceApiKey);
+		final Optional<String> secret = FileUtils.getSecret(this.binanceSecretKey);
+		if (key.isEmpty() || secret.isEmpty()) {
+			return new SpotClientImpl();
+		}
+		return new SpotClientImpl(key.get(), secret.get());
 	}
 }

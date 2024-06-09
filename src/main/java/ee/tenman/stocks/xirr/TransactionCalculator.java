@@ -22,10 +22,10 @@ public class TransactionCalculator {
 	
 	public void processDate(final LocalDate date, final BigDecimal price, final LocalDate lastDataDate) {
 		if (this.shouldAddStockPurchase(date)) {
-            this.addStockPurchaseTransaction(date, price);
+			this.addStockPurchaseTransaction(date, price);
 		}
 		if (date.isEqual(lastDataDate)) {
-            this.addFinalSellingTransaction(date, price);
+			this.addFinalSellingTransaction(date, price);
 		}
 	}
 	
@@ -34,14 +34,14 @@ public class TransactionCalculator {
 	}
 	
 	private void addStockPurchaseTransaction(final LocalDate date, final BigDecimal price) {
-        this.lastMonthDate = date;
+		this.lastMonthDate = date;
 		final BigDecimal stocksCount = this.baseMonthlyInvestment.divide(price, RoundingMode.DOWN);
-        this.totalBoughtStocksCount = this.totalBoughtStocksCount.add(stocksCount);
-        this.transactions.add(new Transaction(this.baseMonthlyInvestment.negate().doubleValue(), date));
+		this.totalBoughtStocksCount = this.totalBoughtStocksCount.add(stocksCount);
+		this.transactions.add(new Transaction(this.baseMonthlyInvestment.negate().doubleValue(), date));
 	}
 	
 	private void addFinalSellingTransaction(final LocalDate date, final BigDecimal price) {
 		final BigDecimal amount = price.multiply(this.totalBoughtStocksCount);
-        this.transactions.add(new Transaction(amount.doubleValue(), date));
+		this.transactions.add(new Transaction(amount.doubleValue(), date));
 	}
 }

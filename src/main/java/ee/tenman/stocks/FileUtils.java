@@ -5,15 +5,16 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.joining;
 
 public interface FileUtils {
-	static String getSecret(final ClassPathResource classPathResource) {
+	static Optional<String> getSecret(final ClassPathResource classPathResource) {
 		try (final BufferedReader buffer = new BufferedReader(new InputStreamReader(classPathResource.getInputStream()))) {
-			return buffer.lines().collect(joining(""));
+			return Optional.of(buffer.lines().collect(joining("")));
 		} catch (final IOException ignored) {
-			return null;
+			return Optional.empty();
 		}
 	}
 }

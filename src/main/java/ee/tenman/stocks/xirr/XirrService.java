@@ -22,11 +22,11 @@ public class XirrService {
 	@PostConstruct
 	public void init() {
 		log.info("XIRR service initialized");
-        this.calculateStockXirr("QDVE.DEX");
-        this.calculateStockXirr("IITU");
-        this.calculateStockXirr("AMZN");
-        this.calculateStockXirr("BTCUSDT");
-        this.calculateStockXirr("ETHUSDT");
+		this.calculateStockXirr("QDVE.DEX");
+		this.calculateStockXirr("IITU");
+		this.calculateStockXirr("AMZN");
+		this.calculateStockXirr("BTCUSDT");
+		this.calculateStockXirr("ETHUSDT");
 	}
 	
 	public double calculateStockXirr(final String ticker) {

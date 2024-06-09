@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -18,10 +17,5 @@ public class MockBinanceService implements BinanceService {
 	public SortedMap<LocalDate, BigDecimal> getMonthlyPrices(String symbol) {
 		return new TreeMap<>() {
 		};
-	}
-	
-	@Override
-	public Map<String, String> getSymbols() {
-		return Map.of();
 	}
 }

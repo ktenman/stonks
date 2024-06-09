@@ -14,9 +14,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -47,23 +45,5 @@ public class RealBinanceService implements BinanceService {
 			log.error("Error getting monthly prices for symbol: {}", symbol, e);
 		}
 		return monthlyPrices;
-	}
-	
-	@Retryable(backoff = @Backoff(delay = 1000))
-	public Map<String, String> getSymbols() {
-		final Map<String, String> symbols = new HashMap<>();
-		try {
-			final String result = this.spotClient.createMarket().exchangeInfo(new LinkedHashMap<>());
-			final JSONArray jsonArray = new JSONArray(result);
-			jsonArray.toList().forEach(obj -> {
-				final JSONArray symbol = (JSONArray) obj;
-				final String symbolName = symbol.getString(0);
-				final String baseAsset = symbol.getString(1);
-				symbols.put(symbolName, baseAsset);
-			});
-		} catch (final BinanceConnectorException e) {
-			log.error("Error getting symbols", e);
-		}
-		return symbols;
 	}
 }
