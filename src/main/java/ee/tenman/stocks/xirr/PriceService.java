@@ -23,7 +23,11 @@ public class PriceService {
 	
 	public SortedMap<LocalDate, BigDecimal> getHistoricalData(final String ticker) {
 		try {
-			return this.binanceService.getMonthlyPrices(ticker);
+			SortedMap<LocalDate, BigDecimal> monthlyPrices = this.binanceService.getMonthlyPrices(ticker);
+			if (monthlyPrices.isEmpty()) {
+				throw new RuntimeException("No monthly prices found for ticker: " + ticker);
+			}
+			return monthlyPrices;
 		} catch (final Exception e) {
 			final TreeMap<LocalDate, BigDecimal> historicalData = new TreeMap<>();
 			final AlphaVantageResponse response = this.alphaVantageService.getMonthlyTimeSeries(ticker);

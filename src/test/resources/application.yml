@@ -1,2 +1,5 @@
 alphavantage:
   url: http://localhost:${wiremock.server.port}
+spring:
+  profiles:
+    active: test
