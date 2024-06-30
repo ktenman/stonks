@@ -2,3 +2,8 @@ alphavantage:
   url: https://www.alphavantage.co
 server:
   port: 50099
+
+logging:
+  level:
+    com.binance: OFF
+    ee.tenman.stocks.alphavantage: OFF

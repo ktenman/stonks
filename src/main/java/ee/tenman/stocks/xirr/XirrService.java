@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
@@ -22,18 +23,20 @@ public class XirrService {
 	@PostConstruct
 	public void init() {
 		log.info("XIRR service initialized");
-		this.calculateStockXirr("QDVE.DEX");
-		this.calculateStockXirr("IITU");
-		this.calculateStockXirr("AMZN");
-		this.calculateStockXirr("BTCUSDT");
-		this.calculateStockXirr("ETHUSDT");
+		CompletableFuture.runAsync(() -> this.calculateStockXirr("QDVE.DEX"));
+		CompletableFuture.runAsync(() -> this.calculateStockXirr("IITU"));
+		CompletableFuture.runAsync(() -> this.calculateStockXirr("AMZN"));
+		CompletableFuture.runAsync(() -> this.calculateStockXirr("BTCUSDT"));
+		CompletableFuture.runAsync(() -> this.calculateStockXirr("ETHUSDT"));
+		CompletableFuture.runAsync(() -> this.calculateStockXirr("NVDA"));
 	}
 	
 	public double calculateStockXirr(final String ticker) {
 		try {
 			final List<Transaction> transactions = this.processHistoricalData(ticker);
 			final double xirrValue = new Xirr(transactions).xirr();
-			log.info("{} : {}%", ticker, xirrValue * 100);
+			final String formattedXirrValue = String.format("%,.3f%%", xirrValue * 100);
+			log.info("{} : {}", ticker, formattedXirrValue);
 			return xirrValue + 1;
 		} catch (final Exception e) {
 			log.error("Error in calculating XIRR for ticker: {}, error: ", ticker, e);
