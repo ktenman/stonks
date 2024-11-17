@@ -14,7 +14,6 @@ import java.util.Optional;
 @Slf4j
 public class AlphaVantageService {
 	
-	
 	Gson gson = new Gson();
 	
 	@Resource

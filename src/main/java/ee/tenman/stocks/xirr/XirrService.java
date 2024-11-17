@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -24,13 +25,8 @@ public class XirrService {
 	public void init() {
 		log.info("XIRR service initialized");
 		CompletableFuture.runAsync(() -> this.calculateStockXirr("QDVE.DEX"));
-		CompletableFuture.runAsync(() -> this.calculateStockXirr("IITU"));
-		CompletableFuture.runAsync(() -> this.calculateStockXirr("AMZN"));
-		CompletableFuture.runAsync(() -> this.calculateStockXirr("BTCUSDT"));
-		CompletableFuture.runAsync(() -> this.calculateStockXirr("ETHUSDT"));
-		CompletableFuture.runAsync(() -> this.calculateStockXirr("NVDA"));
 	}
-	
+
 	public double calculateStockXirr(final String ticker) {
 		try {
 			final List<Transaction> transactions = this.processHistoricalData(ticker);
@@ -51,4 +47,16 @@ public class XirrService {
 		historicalData.forEach((date, price) -> calculator.processDate(date, price, lastDataDate));
 		return calculator.getTransactions();
 	}
+
+	private List<Transaction> processHistoricalDataLast10Years(final String ticker) {
+		final SortedMap<LocalDate, BigDecimal> historicalData = this.priceService.getHistoricalData(ticker);
+		final LocalDate fiveYearsAgo = LocalDate.now().minusYears(10);
+		final SortedMap<LocalDate, BigDecimal> filteredData = new TreeMap<>(historicalData.tailMap(fiveYearsAgo));
+
+		final TransactionCalculator calculator = new TransactionCalculator(BASE_ORIGINAL_BIG_DECIMAL_STOCK);
+		final LocalDate lastDataDate = filteredData.lastKey();
+		filteredData.forEach((date, price) -> calculator.processDate(date, price, lastDataDate));
+		return calculator.getTransactions();
+	}
+
 }

@@ -6,7 +6,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class RateLimiter {
-	private static final int MAX_REQUESTS_PER_MINUTE = 29;
+	private static final int MAX_REQUESTS_PER_MINUTE = 8;
 	private final int maxRequests;
 	private final int timePeriodInMillis;
 	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
