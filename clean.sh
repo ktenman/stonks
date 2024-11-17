@@ -6,6 +6,7 @@ rm -rf node_modules
 rm -rf .kotlin
 rm gradlew
 rm LICENSE
+rm -rf target
 rm package-lock.json
 rm combined_files.txt
 python3 code.py
