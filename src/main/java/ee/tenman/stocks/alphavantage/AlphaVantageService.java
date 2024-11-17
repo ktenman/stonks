@@ -1,8 +1,10 @@
 package ee.tenman.stocks.alphavantage;
 
 import com.google.gson.Gson;
+import ee.tenman.stocks.configuration.RedisConfiguration;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ public class AlphaVantageService {
 	private AlphaVantageClient client;
 	
 	@Retryable(backoff = @Backoff(delay = 1000))
+	@Cacheable(value = RedisConfiguration.ONE_DAY_CACHE, key = "#symbol")
 	public AlphaVantageResponse getMonthlyTimeSeries(final String symbol) {
 		return this.getTicker(symbol)
 				.map(ticker -> {

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.TreeMap;
 
@@ -13,7 +14,9 @@ import java.util.TreeMap;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AlphaVantageResponse {
+public class AlphaVantageResponse implements Serializable {
+	private static final long serialVersionUID = 1234567890L;
+
 	@JsonProperty("Monthly Time Series")
 	private TreeMap<String, AlphaVantageDayData> monthlyTimeSeries;
 	
@@ -27,7 +30,9 @@ public class AlphaVantageResponse {
 	@Builder
 	@AllArgsConstructor
 	@NoArgsConstructor
-	public static class AlphaVantageDayData {
+	public static class AlphaVantageDayData implements Serializable {
+		private static final long serialVersionUID = -1234567891L;
+
 		@JsonProperty("4. close")
 		private BigDecimal close;
 	}

@@ -3,6 +3,16 @@ alphavantage:
 server:
   port: 50099
 
+spring:
+  session:
+    store-type: redis
+  jackson:
+    default-property-inclusion: non_null
+  data:
+    redis:
+      host: redis
+      port: 6379
+
 logging:
   level:
     com.binance: OFF

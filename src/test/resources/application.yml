@@ -3,3 +3,11 @@ alphavantage:
 spring:
   profiles:
     active: test
+  session:
+    store-type: redis
+  jackson:
+    default-property-inclusion: non_null
+  data:
+    redis:
+      host: redis
+      port: 6379
